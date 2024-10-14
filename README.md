@@ -17,3 +17,10 @@ This repository contains the source code for the MICCAI 2024 paper [Efficient Co
 }
 ```
 
+## Outline
+
+* ```block.py``` implementation of _full-band spectral-accelerated spatial diffusion module_ (**FB-SASD**), _spatial gradient_ (**SG**), _vertex-wise multi-layer perceptron_ (**MLP**) and **FB-Diffusion** block
+* ```model.py``` implementation of **Cortex-Diffusion**
+* ```step.py``` contains the functions for running **Cortex-Diffusion** during training, validation, and testing
+* ```utils.py``` and ```geometry.py``` mainly contains some useful functions for data processing
+* ```dataset.py``` a subclass of ```torch.utils.data.Dataset```.
