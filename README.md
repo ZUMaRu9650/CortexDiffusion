@@ -29,7 +29,7 @@ This repository contains the source code for the MICCAI 2024 paper [Efficient Co
 
 Each input cortical surface needs to be preprocessed through function ```compute_operators``` in ```geometry.py``` like:
 ```
-_, mass, L, evals, evecs, gradX, gradY = compute_operator(vertices, faces, k)
+_, mass, L, evals, evecs, gradX, gradY = compute_operators(vertices, faces, k)
 ```
 * ```vertices``` stores the 3D vertex coordinates
 * ```faces``` stores the vertex indices of each triangle face
