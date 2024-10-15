@@ -1,8 +1,76 @@
 import numpy as np
+import pyvista
 import scipy
 import torch
 import trimesh
 
+def read_vtk(in_file):
+    """读取.vtk文件 
+    Parameters:
+        in_file (str) 文件路径
+    Output: 
+        data (dict)  'vertices', 'faces', 'curv', 'sulc', ...
+    """
+
+    polydata = pyvista.read(in_file)
+ 
+    n_faces = polydata.n_faces
+    vertices = np.array(polydata.points)  # get vertices coordinate
+    
+    # only for triangles polygons data
+    faces = np.array(polydata.GetPolys().GetData())  # get faces connectivity
+    assert len(faces)/4 == n_faces, "faces number is not consistent!"
+    faces = np.reshape(faces, (n_faces,4))
+    
+    data = {'vertices': vertices,
+            'faces': faces
+            }
+    
+    #cell_data = polydata.cell_data
+    #for key, value in cell_data.items():
+    #    if value.dtype == 'uint32':
+    #        data[key] = np.array(value).astype(np.int64)
+    #    elif  value.dtype == 'uint8':
+    #        data[key] = np.array(value).astype(np.int32)
+    #    else:
+    #        data[key] = np.array(value)
+
+    point_data = polydata.point_data
+    for key, value in point_data.items():
+        if value.dtype == 'uint32':
+            data[key] = np.array(value).astype(np.int64)
+        elif  value.dtype == 'uint8':
+            data[key] = np.array(value).astype(np.int32)
+        else:
+            data[key] = np.array(value)
+
+    return data
+
+def write_vtk(in_dic, mode, file):
+    """
+    Write .vtk POLYDATA file
+    
+    in_dic: dictionary, vtk data
+    mode: vertices or faces
+    file: string, output file name
+    """
+    assert 'vertices' in in_dic, "output vtk data does not have vertices!"
+    assert 'faces' in in_dic, "output vtk data does not have faces!"
+    assert mode in ['vertices','faces']
+    
+    vertices = in_dic['vertices']
+    faces = in_dic['faces']
+    surf = pyvista.PolyData(vertices, faces)
+    
+    del in_dic['vertices']
+    del in_dic['faces']
+    for key, value in in_dic.items():
+        if mode == 'vertices':
+            surf.point_data[key] = value
+        elif mode == 'faces':
+            surf.cell_data[key] = value
+
+    surf.save(file, binary=False)
 
 def norm(x):
     return np.linalg.norm(x, axis=-1)
