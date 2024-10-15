@@ -5,9 +5,10 @@ import torch
 import trimesh
 
 def read_vtk(in_file):
-    """读取.vtk文件 
+    """
+    read .vtk POLYDATA file
     Parameters:
-        in_file (str) 文件路径
+        in_file (str) file path
     Output: 
         data (dict)  'vertices', 'faces', 'curv', 'sulc', ...
     """
