@@ -16,9 +16,8 @@ def train(net, dataset, batch_size, optimizer, epoch, device):
 
     dataloader = DataLoader(dataset=dataset,batch_size=batch_size,shuffle=True)
 
-    for _, coords, feats, labels, mass, evals, evecs, gradX, gradY in tqdm(dataloader, desc=str(epoch)):
+    for _, coords, labels, mass, evals, evecs, gradX, gradY in tqdm(dataloader, desc=str(epoch)):
         coords = coords.to(torch.device(device))
-        feats = feats.to(torch.device(device))
         labels = labels.to(torch.device(device))
         mass = mass.to(torch.device(device))
         evals = evals.to(torch.device(device))
@@ -27,7 +26,7 @@ def train(net, dataset, batch_size, optimizer, epoch, device):
         gradY = gradY.to(torch.device(device))
 
         optimizer.zero_grad()
-        outputs = net(torch.cat((coords, feats), dim=2), mass, evals, evecs, gradX, gradY)  # (B,Nv,C_out)
+        outputs = net(coords, mass, evals, evecs, gradX, gradY)  # (B,Nv,C_out)
         loss = lossfunc(outputs.transpose(2,1), labels)
         loss.backward()
         optimizer.step()
@@ -53,9 +52,8 @@ def val(net, dataset, batch_size, epoch, device):
     dataloader = DataLoader(dataset=dataset,batch_size=batch_size,shuffle=True)
 
     with torch.no_grad():
-        for _, coords, feats, labels, mass, evals, evecs, gradX, gradY in tqdm(dataloader, desc=str(epoch)):
+        for _, coords, labels, mass, evals, evecs, gradX, gradY in tqdm(dataloader, desc=str(epoch)):
             coords = coords.to(torch.device(device))
-            feats = feats.to(torch.device(device))
             labels = labels.to(torch.device(device))
             mass = mass.to(torch.device(device))
             evals = evals.to(torch.device(device))
@@ -63,7 +61,7 @@ def val(net, dataset, batch_size, epoch, device):
             gradX = gradX.to(torch.device(device))
             gradY = gradY.to(torch.device(device))
 
-            outputs = net(torch.cat((coords, feats), dim=2), mass, evals, evecs, gradX, gradY)  # (B,Nv,C_out)
+            outputs = net(coords, mass, evals, evecs, gradX, gradY)  # (B,Nv,C_out)
             preds = torch.argmax(outputs, dim=2)
             acc = torch.sum((preds == labels).sum(dim=1) / labels.shape[1])
             loss = lossfunc(outputs.transpose(2,1), labels)
