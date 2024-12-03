@@ -38,6 +38,9 @@ _, mass, L, evals, evecs, gradX, gradY = compute_operators(vertices, faces, k)
 
 We suggest you perform the above processing for each input mesh in advance and save the results in ```.pt``` format like:
 ```
+scaled_vertices = coords_normalize(vertices)  # The function "coords_normalize" is located at "utils.py"
+_, mass, _, evals, evecs, gradX, gradY = compute_operators(torch.from_numpy(scaled_vertices).float(), torch.from_numpy(faces).long(), k=200)
+
 d = dict()
 d["vertices"] = vertices
 d["massvec"] = mass
