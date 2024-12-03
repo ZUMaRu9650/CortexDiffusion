@@ -23,7 +23,7 @@ This repository contains the source code for the MICCAI 2024 paper [Efficient Co
 * ```model.py``` contains implementation of **Cortex-Diffusion**
 * ```step.py``` contains the functions for running **Cortex-Diffusion** during training, validation, and testing
 * ```utils.py``` and ```geometry.py``` mainly contains some useful functions for data processing
-* ```dataset.py``` is a subclass of ```torch.utils.data.Dataset```.
+* ```dataset.py``` contains a subclass of ```torch.utils.data.Dataset```.
 
 ## Tips
 
@@ -38,11 +38,14 @@ _, mass, L, evals, evecs, gradX, gradY = compute_operators(vertices, faces, k)
 
 We suggest you perform the above processing for each input mesh in advance and save the results in ```.pt``` format like:
 ```
-scaled_vertices = coords_normalize(vertices)  # The function "coords_normalize" is located at "utils.py"
+### Assuming you already have access to the vertex, face, and label information of the cortical surface mesh ###
+
+scaled_vertices = coords_normalize(vertices)
 _, mass, _, evals, evecs, gradX, gradY = compute_operators(torch.from_numpy(scaled_vertices).float(), torch.from_numpy(faces).long(), k=200)
 
 d = dict()
-d["vertices"] = vertices
+d["vertices"] = torch.from_numpy(scaled_vertices).float()
+d["label"] = torch.from_numpy(label_transfer(label)).long()
 d["massvec"] = mass
 d["evals"] = evals
 d["evecs"] = evecs
@@ -50,8 +53,9 @@ d["gradX"] = gradX
 d["gradY"] = gradY
 torch.save(d, 'your_work_space/surface.pt'))
 ```
+The function ```compute_operators``` and ```label_transfer``` are located in ```utils.py``` 
 
-Here is an example of using **Cortex-Diffusion** for cortical surface parcellation:
+Here is an example of training, validating and testing **Cortex-Diffusion**:
 ```
 import os
 import numpy as np
