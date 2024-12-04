@@ -53,7 +53,7 @@ d["gradX"] = gradX
 d["gradY"] = gradY
 torch.save(d, 'your_work_space/surface.pt'))
 ```
-The function ```compute_operators``` and ```label_transfer``` are located in ```utils.py``` 
+The function ```coords_normalize``` and ```label_transfer``` are located in ```utils.py``` 
 
 Here is an example of training, validating and testing **Cortex-Diffusion**:
 ```
