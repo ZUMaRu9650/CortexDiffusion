@@ -1,4 +1,0 @@
-These VTK files mainly contain the label information that I have processed.
-In the raw data, the number of label categories in certain cortices differs from that in others. 
-Upon investigation, I found that the regions with anomalous labels were very small. 
-To resolve this, I merged these regions with adjacent ones, ensuring that all cortices had a consistent total of 32 label categories.
